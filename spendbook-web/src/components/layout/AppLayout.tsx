@@ -13,11 +13,18 @@ interface Props {
 
 export default function AppLayout({ children }: Props) {
     const screens = useBreakpoint();
-    const isMobile = !screens.md; 
+    const isMobile = !screens.md;
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Header style={{ padding: 0, background: '#fff' }}>
+            <Header style={{
+                padding: 0,
+                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+            }}>
                 <HeaderSummary />
                 {!isMobile && <DesktopNav />}
             </Header>

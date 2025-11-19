@@ -29,4 +29,9 @@ const transactionSchema = new Schema<ITransaction>(
 
 transactionSchema.index({ userId: 1, walletId: 1, date: -1 });
 
+transactionSchema.index(
+    { userId: 1, type: 1, date: -1, _id: -1 },
+    { name: "user_type_date_desc_id_desc" }
+);
+
 export const Transaction = model<ITransaction>("Transaction", transactionSchema);

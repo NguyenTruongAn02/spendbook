@@ -8,6 +8,8 @@ export interface IWallet extends Document {
     startDate: Date;
     openingBalance: number;
     currentBalance: number;
+    isArchived: boolean;
+    isDeleted: boolean;
 }
 
 const walletSchema = new Schema<IWallet>(
@@ -18,11 +20,20 @@ const walletSchema = new Schema<IWallet>(
         accountNumber: String,
         startDate: { type: Date, required: true },
         openingBalance: { type: Number, required: true, min: 0 },
-        currentBalance: { type: Number, required: true, min: 0 }
+        currentBalance: { type: Number, required: true, min: 0 },
+
+        isArchived: { type: Boolean, default: false },
+        isDeleted: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
 
-walletSchema.index({ userId: 1, name: 1 }, { unique: true });
+walletSchema.index(
+    { userId: 1, name: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { isDeleted: false, isArchived: false }
+    }
+);
 
 export const Wallet = model<IWallet>("Wallet", walletSchema);

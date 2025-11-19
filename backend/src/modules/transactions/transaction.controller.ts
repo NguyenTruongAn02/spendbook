@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import { AuthRequest } from "@/middlewares/auth";
 import * as service from "@/modules/transactions/transaction.service";
+import { TransactionType } from "@/modules/transactions/transaction.model";
 
 export async function create(req: AuthRequest, res: Response, next: NextFunction) {
     try {
@@ -13,9 +14,25 @@ export async function create(req: AuthRequest, res: Response, next: NextFunction
 
 export async function history(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-        const page = parseInt((req.query.page as string) || "1", 10);
+        const { cursor, sort, type } = req.query;
+
         const limit = parseInt((req.query.limit as string) || "20", 10);
-        const result = await service.getHistory(req.userId!, page, limit);
+
+        let sortValue: "newest" | "oldest" = "newest";
+        if (sort === "oldest") sortValue = "oldest";
+
+        let typeValue: TransactionType | "ALL" = "ALL";
+        if (type === "INCOME" || type === "EXPENSE") {
+            typeValue = type;
+        }
+
+        const result = await service.getHistory(req.userId!, {
+            cursor: cursor as string | undefined,
+            limit,
+            sort: sortValue,
+            type: typeValue,
+        });
+
         res.success(result);
     } catch (err) {
         next(err);

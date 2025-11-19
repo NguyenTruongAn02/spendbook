@@ -5,9 +5,9 @@ export interface AuthRequest extends Request {
     userId?: string;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
-
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+    const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+
     const header = req.headers.authorization || "";
     const [scheme, token] = header.split(" ");
 

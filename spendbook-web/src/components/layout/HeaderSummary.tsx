@@ -1,50 +1,64 @@
-import { Button, Typography, Space, Avatar } from 'antd';
-import { useEffect, useState } from 'react';
-import { walletApi } from '@/api/walletApi';
+import { Button, Typography, Space, Avatar, Dropdown, Menu } from 'antd';
 import GoogleLoginButton from '@/components/auth/GoogleLoginButton';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWalletSummary } from '@/contexts/WalletSummaryContext';
 
 const { Text } = Typography;
 
 export default function HeaderSummary() {
     const { user, logout } = useAuth();
-    const [total, setTotal] = useState<number>(0);
+    const { total, loading } = useWalletSummary();
 
-    useEffect(() => {
-        walletApi.getSummary().then((data) => setTotal(data.totalBalance));
-    }, []);
+    const menu = (
+        <Menu
+            items={[
+                {
+                    key: 'logout',
+                    label: (
+                        <span onClick={logout} style={{ color: 'red' }}>
+                            Đăng xuất
+                        </span>
+                    ),
+                },
+            ]}
+        />
+    );
 
     return (
         <div
             style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '8px 16px',
+                padding: '0px 16px',
+                color: 'white',
             }}
         >
-
             <div>
-                <Text type="secondary">Tổng số tiền hiện có</Text>
-                <div style={{ fontSize: 20, fontWeight: 600 }}>
-                    {total} ₫
-                </div>
+                <Text
+                    style={{
+                        color: 'rgba(255,255,255,0.9)',
+                        fontSize: 16,
+                        fontWeight: 700,
+                    }}
+                >
+                    {loading ? 'Đang tính tổng tiền...' : `Tổng tiền: ${total.toLocaleString()} ₫`}
+                </Text>
             </div>
 
-
-            <Space>
+            <div>
                 {user ? (
-                    <>
-                        {/* <Avatar src={user.avatar}>{user.name[0]  }</Avatar> */}
-                        <Text strong>{user.name}</Text>
-                        <Button size="small" onClick={logout}>
-                            Đăng xuất
-                        </Button>
-                    </>
+                    <Dropdown overlay={menu} trigger={['click']}>
+                        <Space style={{ cursor: 'pointer' }}>
+                            <Avatar src={user.avatar}>{user.name[0]}</Avatar>
+                            <Text strong style={{ color: '#fff' }}>
+                                {user.name}
+                            </Text>
+                        </Space>
+                    </Dropdown>
                 ) : (
                     <GoogleLoginButton />
                 )}
-            </Space>
+            </div>
         </div>
     );
 }

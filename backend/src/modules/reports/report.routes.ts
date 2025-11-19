@@ -6,5 +6,6 @@ const router = Router();
 router.use(requireAuth);
 
 router.get("/statement", controller.statement);
+router.get("/chart", controller.chart);
 
 export default router;

@@ -3,25 +3,48 @@ import { axiosClient } from './axiosClient';
 export type TransactionType = 'INCOME' | 'EXPENSE';
 
 export interface Transaction {
-    id: string;
+    _id: string;
+    userId: string;
     walletId: string;
-    walletName: string;
+    categoryId?: string;
+    categoryName: string;
     type: TransactionType;
     amount: number;
-    category: string;
+    date: string;
     note?: string;
-    date: string; 
+}
+
+export type HistorySort = 'newest' | 'oldest';
+export type HistoryFilterType = TransactionType | 'ALL';
+
+export interface TransactionCursorResponse {
+    items: Transaction[];
+    limit: number;
+    sort: HistorySort;
+    type: HistoryFilterType;
+    nextCursor?: string | null;
+    hasMore: boolean;
+}
+
+export interface TransactionHistoryParams {
+    cursor?: string;
+    limit?: number;
+    sort?: HistorySort;
+    type?: HistoryFilterType;
 }
 
 export const transactionApi = {
-    getAll(): Promise<Transaction[]> {
-        return axiosClient.get('/transactions').then((res) => res.data);
+    getHistory(params: TransactionHistoryParams = {}): Promise<TransactionCursorResponse> {
+        return axiosClient
+            .get('/transactions/history', { params })
+            .then((res) => res.data);
     },
+
     create(payload: {
         walletId: string;
         type: TransactionType;
         amount: number;
-        category: string;
+        categoryId?: string;
         note?: string;
         date: string;
     }): Promise<Transaction> {
