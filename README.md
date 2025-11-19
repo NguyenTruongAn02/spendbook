@@ -290,3 +290,5 @@ BASE_URL = http://localhost:4000/api
 TOKEN = <jwt>
 
 Chạy toàn bộ collection để test API
+
+==> nhánh git chính là nhánh developer
